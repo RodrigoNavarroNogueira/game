@@ -1,3 +1,20 @@
+import os
+
+import textwrap
+import dotenv
+import pymysql
+
+TABLE_NAME = 'characters'
+
+dotenv.load_dotenv()
+
+connection = pymysql.connect(
+    host=os.environ['MYSQL_HOST'],
+    user=os.environ['MYSQL_USER'],
+    password=os.environ['MYSQL_PASSWORD'],
+    database=os.environ['MYSQL_DATABASE'],
+)
+
 class Ser:
     def __init__(self):
         self.nome = None
@@ -108,9 +125,10 @@ class Anao(Ser):
 
 def criar_jogador(tipo_raca):
     class Jogador(tipo_raca):
-        def __init__(self, id, xp, nome, altura, idade, sexo):
+        def __init__(self, id, online, xp, nome, altura, idade, sexo):
             super().__init__()
             self.id = id
+            self.online = online
             self.xp = xp
             self.nome = nome
             self.altura = altura
@@ -120,6 +138,37 @@ def criar_jogador(tipo_raca):
             self.ouro = 0
             self.cla = None
             self.mapa = None
+
+    return Jogador
+
+
+def instanciar_jogador(tipo_raca):
+    class Jogador(tipo_raca):
+        def __init__(self, id, nome , online, nivel, xp, hp, mana, rage, buffs, debuffs, altura, idade, sexo, atributos, status, inventario, equips, ouro, emotes, raca, talentos, cla, mapa):
+            super().__init__()
+            self.id = id
+            self.nome = nome
+            self.online = online
+            self.nivel = nivel
+            self.xp = xp
+            self.hp = hp
+            self.mana = mana
+            self.rage = rage
+            self.buffs = buffs
+            self.debuffs = debuffs
+            self.altura = altura
+            self.idade = idade
+            self.sexo = sexo
+            self.atributos = atributos
+            self.status = status
+            self.inventario = inventario
+            self.equips = equips
+            self.ouro = ouro
+            self.emotes = emotes
+            self.raca = raca
+            self.talentos = talentos
+            self.cla = cla
+            self.mapa = mapa
 
     return Jogador
 
