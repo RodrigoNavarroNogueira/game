@@ -364,7 +364,8 @@ def loop():
         opcao = start()
 
         if opcao == 1:
-            print('Carregando o jogo, por favor aguarde.')
+            char_list = list_characters()
+            character_select(char_list)
             char = login()
             char.status = json.loads(char.status)
             char.nivel = 3
@@ -372,13 +373,9 @@ def loop():
             char.inventario = json.loads(char.inventario)
             varss = vars(char)
             logoff(varss)
-
         elif opcao == 2:
-            char_list = list_characters()
-            exibicao(char_list)
-        elif opcao == 3:
             pass
-        elif opcao == 4:
+        elif opcao == 3:
             print('\nFinalizando o programa, até mais!\n')
             raise SystemExit
 

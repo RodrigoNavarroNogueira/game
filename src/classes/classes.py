@@ -18,6 +18,7 @@ connection = pymysql.connect(
 class Ser:
     def __init__(self):
         self.nome = None
+        self.localizacao = []
         self.nivel = 1
         self.hp = 1
         self.mana = None
@@ -128,6 +129,7 @@ def criar_jogador(tipo_raca):
         def __init__(self, id, online, xp, nome, altura, idade, sexo):
             super().__init__()
             self.id = id
+            self.localizacao = ['base_map', 1, 1]
             self.online = online
             self.xp = xp
             self.nome = nome
@@ -144,10 +146,11 @@ def criar_jogador(tipo_raca):
 
 def instanciar_jogador(tipo_raca):
     class Jogador(tipo_raca):
-        def __init__(self, id, nome , online, nivel, xp, hp, mana, rage, buffs, debuffs, altura, idade, sexo, atributos, status, inventario, equips, ouro, emotes, raca, talentos, cla, mapa):
+        def __init__(self, id, nome, localizacao, online, nivel, xp, hp, mana, rage, buffs, debuffs, altura, idade, sexo, atributos, status, inventario, equips, ouro, emotes, raca, talentos, cla, mapa):
             super().__init__()
             self.id = id
             self.nome = nome
+            self.localizacao = localizacao
             self.online = online
             self.nivel = nivel
             self.xp = xp

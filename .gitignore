@@ -139,3 +139,4 @@ dmypy.json
 .vscode/
 
 mysql_206
+src/dbeaver-ce_latest_amd64.deb

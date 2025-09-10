@@ -18,32 +18,34 @@ with connection:
     with connection.cursor() as cursor:
         # SQL
         cursor.execute(  # type: ignore
-            f'CREATE TABLE IF NOT EXISTS {TABLE_NAME} ('
-            'id INT NOT NULL AUTO_INCREMENT, '
-            'nome VARCHAR(50) NOT NULL, '
-            'idade INT NOT NULL, '
-            'PRIMARY KEY (id)'
-            ') '
+            f"""CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
+                id INT NOT NULL AUTO_INCREMENT,
+                nome VARCHAR(100),
+                localizacao JSON,
+                online BOOLEAN NOT NULL,
+                nivel INT,
+                xp INT,
+                hp INT,
+                mana INT NULL,
+                rage INT NULL,
+                buffs JSON,
+                debuffs JSON,
+                altura FLOAT,
+                idade INT,
+                sexo VARCHAR(10),
+                atributos JSON,
+                status JSON,
+                inventario JSON,
+                equips JSON,
+                ouro INT,
+                emotes JSON,
+                raca VARCHAR(50),
+                talentos JSON,
+                cla VARCHAR(100),
+                mapa VARCHAR(100),
+                PRIMARY KEY (id)
+            ) """
         )
-        print(cursor)
        # CUIDADO: ISSO LIMPA A TABELA
         cursor.execute(f'TRUNCATE TABLE {TABLE_NAME}')  # type: ignore
-    connection.commit()
-
-    # Começo a manipular dados a partir daqui
-
-    with connection.cursor() as cursor:
-        cursor.execute(  # type: ignore
-            f'INSERT INTO {TABLE_NAME} '
-            '(nome, idade) VALUES ("Rodrigo", 23) '
-        )
-        cursor.execute(  # type: ignore
-            f'INSERT INTO {TABLE_NAME} '
-            '(nome, idade) VALUES ("Miguel", 24) '
-        )
-        result = cursor.execute(  # type: ignore
-            f'INSERT INTO {TABLE_NAME} '
-            '(nome, idade) VALUES ("Rafael", 25) '
-        )
-        print(result)
     connection.commit()
