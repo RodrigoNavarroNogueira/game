@@ -42,7 +42,7 @@ def character_menu():
     return option
 
 
-def login():
+def login(char_id):
     connection = pymysql.connect(
     host=os.environ['MYSQL_HOST'],
     user=os.environ['MYSQL_USER'],
@@ -52,7 +52,7 @@ def login():
     with connection:
         with connection.cursor() as cursor:
             sql = (f'SELECT * FROM characters WHERE id=%s')
-            cursor.execute(sql, (1,))
+            cursor.execute(sql, (char_id,))
             data_char = cursor.fetchall()  # type: ignore
 
     Jogador = instanciar_jogador(Humano)
@@ -104,18 +104,21 @@ def list_characters():
     return char_list
 
 
-def character_select(char_list):
-    if len(char_list) <= 0:
-        print('\nVocê ainda não criou nenhum personagem!')
-    else:
-        print('\nSelecione o char que você quer logar: \n')
-    for i, letra in enumerate(char_list):
-        print(f'{i + 1} - {letra[1]}')
+def character_menu_options(char_list):
     op = character_menu()
 
     if op == 1:
-        ...
+        char_id = character_select(char_list)
+        print('logandoo,..')
+        char = login(char_id)
+        char.status = json.loads(char.status)
+        char.nivel = 3
+        char.hp = 100
+        char.inventario = json.loads(char.inventario)
+        varss = vars(char)
+        logoff(varss)
     elif op == 2:
+        print('AQUIUIIIIIIIII')
         criar_personagem()
     elif op == 3:
         ...
@@ -125,11 +128,9 @@ def character_select(char_list):
 
 def criar_personagem():
     Jogador = criar_jogador(Humano)
-    char = Jogador(1, False, 0, 'Navarro', 1.80, 30, 'Male')
+    char = Jogador(1, False, 0, 'Navas', 1.80, 30, 'Male')
     char_dict = vars(char)
     char_dict.pop('id')
-    # char_dict = {'id': varss['id']}
-    # char_dict.update({k: v for k, v in varss.items() if k != 'id'})
     print(char_dict)
 
     connection = pymysql.connect(
@@ -155,3 +156,23 @@ def criar_personagem():
 
         cursor.execute(sql, values)
     connection.commit()
+
+
+def character_select(char_list):
+    if len(char_list) <= 0:
+        print('\nVocê ainda não criou nenhum personagem!')
+    else:
+        nick = ''
+        for i, letra in enumerate(char_list):
+            print(f'{i + 1} - {letra[1]}')
+        
+        slot = int(input('\nSelecione o char que você quer logar: \n'))
+
+        for i, tupla in enumerate(char_list):
+            i += 1
+            if i == slot:
+                nick = tupla[1]
+    
+        for t in char_list:
+            if nick in t:
+                return t[0]

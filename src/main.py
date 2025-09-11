@@ -365,14 +365,7 @@ def loop():
 
         if opcao == 1:
             char_list = list_characters()
-            character_select(char_list)
-            char = login()
-            char.status = json.loads(char.status)
-            char.nivel = 3
-            char.hp = 100
-            char.inventario = json.loads(char.inventario)
-            varss = vars(char)
-            logoff(varss)
+            character_menu_options(char_list)
         elif opcao == 2:
             pass
         elif opcao == 3:
