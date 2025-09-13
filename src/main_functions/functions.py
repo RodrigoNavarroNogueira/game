@@ -118,7 +118,6 @@ def character_menu_options(char_list):
         varss = vars(char)
         logoff(varss)
     elif op == 2:
-        print('AQUIUIIIIIIIII')
         criar_personagem()
     elif op == 3:
         ...
@@ -127,8 +126,9 @@ def character_menu_options(char_list):
 
 
 def criar_personagem():
-    Jogador = criar_jogador(Humano)
-    char = Jogador(1, False, 0, 'Navas', 1.80, 30, 'Male')
+    char_info = nick_altura_idade_sex()
+    Jogador = criar_jogador(char_info[0])
+    char = Jogador(1, False, 0, char_info[1], char_info[2], char_info[3], char_info[4])
     char_dict = vars(char)
     char_dict.pop('id')
     print(char_dict)
@@ -176,3 +176,70 @@ def character_select(char_list):
         for t in char_list:
             if nick in t:
                 return t[0]
+            
+
+def nick_altura_idade_sex():
+    char_info = []
+    raca = 0
+    try:
+        while raca == 0 or raca not in [1, 2, 3, 4]:
+            raca = int(input(
+                "\nSelecione a raça do seu personagem:\n\n"
+                "[ 1 ] - Humano\n"
+                "[ 2 ] - Elfo\n"
+                "[ 3 ] - Anao\n"
+                "[ 4 ] - Orc\n\n"
+            ))
+            if type(raca) is int and raca not in [1, 2, 3, 4]:
+                print('\nVocê não digitou uma opção válida')        
+    except ValueError:
+        print('\nVocê não digitou uma opção válida')
+    
+    if raca == 1:
+        char_info.append(Humano)
+    elif raca == 2:
+        char_info.append(Elfo)
+    elif raca == 3:
+        char_info.append(Anao)
+    elif raca == 4:
+        char_info.append(Orc)
+
+    while True:
+        nome = input('Nickname: ')
+        if nome.isalpha() or all(c.isalpha() or c.isspace() for c in nome):
+            nome = nome.strip()
+            break
+        else:
+            print("Entrada inválida! O nome não pode conter números ou caracteres especiais.")
+    char_info.append(nome)
+
+    while True:
+        altura = input('Altura do personagem: ')
+        try:
+            altura = float(altura)
+            break
+        except ValueError:
+            print('Entrada inválida! Por favor, digite um número válido.')
+    char_info.append(altura)
+
+    while True:
+        idade = input('Idade do personagem: ')
+        try:
+            idade = int(idade)
+            break
+        except ValueError:
+            print('Entrada inválida! Por favor, digite um número válido.')
+    char_info.append(idade)
+
+    while True:
+        sexo = input('Sexo do personagem (Male/Female): [M/F]: ').lower().strip()
+        if sexo == 'm':
+            char_info.append('Male')
+            break
+        elif sexo == 'f':
+            char_info.append('Female')
+            break
+        else:
+            print('Voce não digitou uma opção valida')
+
+    return char_info

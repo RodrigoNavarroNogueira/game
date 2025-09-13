@@ -371,5 +371,7 @@ def loop():
         elif opcao == 3:
             print('\nFinalizando o programa, até mais!\n')
             raise SystemExit
-
+# excluir personagens
+# o menu "jogar" nnão esta em looping
+# se tentar logar sem nenhum char dá erro
 loop()
