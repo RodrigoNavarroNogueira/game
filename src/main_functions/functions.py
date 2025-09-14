@@ -4,6 +4,7 @@ import dotenv
 import pymysql
 from classes.classes import *
 import json
+import ast
 
 dotenv.load_dotenv()
 
@@ -112,14 +113,8 @@ def character_menu_options():
         if op == 1:
             char_id = character_select(char_list)
             if char_id:
-                print('logandoo,..')
-                char = login(char_id)
-                char.status = json.loads(char.status)
-                char.nivel = 3
-                char.hp = 100
-                char.inventario = json.loads(char.inventario)
-                varss = vars(char)
-                logoff(varss)
+                print('loading...')
+                gameplay(char_id)
         elif op == 2:
             criar_personagem()
         elif op == 3:
@@ -270,3 +265,45 @@ def excluir_personagem(char_id):
             connection.commit()
 
     print(f'O personagem foi excluido!')
+
+
+def load_map(jogador_pos=None):
+    mapa = [
+        ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#']
+    ]
+
+    if jogador_pos:
+        x, y = jogador_pos
+        mapa[y][x] = 'P'
+    
+    return mapa
+
+
+def gameplay(char_id):
+    char = login(char_id)
+    str_coord = char.localizacao
+    coordenadas = ast.literal_eval(str_coord)
+    mapa = load_map(jogador_pos=(coordenadas[1],coordenadas[2]))
+    for linha in mapa:
+        print(' '.join(linha))
+    char.status = json.loads(char.status)
+    char.nivel = 3
+    char.hp = 100
+    char.inventario = json.loads(char.inventario)
+    coordenadas[1] = 4
+    coordenadas[2] = 5
+    mapa = load_map(jogador_pos=(coordenadas[1],coordenadas[2]))
+    for linha in mapa:
+        print(' '.join(linha))
+    s = json.dumps(coordenadas)
+    print(s)
+    print(type(s))
+    char.localizacao = s
+    varss = vars(char)
+    logoff(varss)
