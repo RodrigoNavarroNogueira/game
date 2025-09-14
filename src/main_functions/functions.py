@@ -104,25 +104,30 @@ def list_characters():
     return char_list
 
 
-def character_menu_options(char_list):
-    op = character_menu()
+def character_menu_options():
+    while True:
+        char_list = list_characters()
+        op = character_menu()
 
-    if op == 1:
-        char_id = character_select(char_list)
-        print('logandoo,..')
-        char = login(char_id)
-        char.status = json.loads(char.status)
-        char.nivel = 3
-        char.hp = 100
-        char.inventario = json.loads(char.inventario)
-        varss = vars(char)
-        logoff(varss)
-    elif op == 2:
-        criar_personagem()
-    elif op == 3:
-        ...
-    elif op == 4:
-        ...
+        if op == 1:
+            char_id = character_select(char_list)
+            if char_id:
+                print('logandoo,..')
+                char = login(char_id)
+                char.status = json.loads(char.status)
+                char.nivel = 3
+                char.hp = 100
+                char.inventario = json.loads(char.inventario)
+                varss = vars(char)
+                logoff(varss)
+        elif op == 2:
+            criar_personagem()
+        elif op == 3:
+            char_id = character_select(char_list, delete=True)
+            if char_id:
+                excluir_personagem(char_id)
+        elif op == 4:
+            break
 
 
 def criar_personagem():
@@ -158,7 +163,7 @@ def criar_personagem():
     connection.commit()
 
 
-def character_select(char_list):
+def character_select(char_list, delete=None):
     if len(char_list) <= 0:
         print('\nVocê ainda não criou nenhum personagem!')
     else:
@@ -166,7 +171,10 @@ def character_select(char_list):
         for i, letra in enumerate(char_list):
             print(f'{i + 1} - {letra[1]}')
         
-        slot = int(input('\nSelecione o char que você quer logar: \n'))
+        if delete is not None:
+            slot = int(input('\nSelecione o char que você quer excluir: \n'))
+        else:
+            slot = int(input('\nSelecione o char que você quer logar: \n'))
 
         for i, tupla in enumerate(char_list):
             i += 1
@@ -243,3 +251,22 @@ def nick_altura_idade_sex():
             print('Voce não digitou uma opção valida')
 
     return char_info
+
+
+def excluir_personagem(char_id):
+    connection = pymysql.connect(
+    host=os.environ['MYSQL_HOST'],
+    user=os.environ['MYSQL_USER'],
+    password=os.environ['MYSQL_PASSWORD'],
+    database=os.environ['MYSQL_DATABASE'],)
+
+    with connection:
+        with connection.cursor() as cursor:
+            sql = (
+                f'DELETE FROM characters '
+                'WHERE id = %s'
+            )
+            cursor.execute(sql, (char_id,))  # type: ignore
+            connection.commit()
+
+    print(f'O personagem foi excluido!')

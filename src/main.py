@@ -364,14 +364,11 @@ def loop():
         opcao = start()
 
         if opcao == 1:
-            char_list = list_characters()
-            character_menu_options(char_list)
+            character_menu_options()
         elif opcao == 2:
             pass
         elif opcao == 3:
             print('\nFinalizando o programa, até mais!\n')
             raise SystemExit
-# excluir personagens
-# o menu "jogar" nnão esta em looping
-# se tentar logar sem nenhum char dá erro
+
 loop()
