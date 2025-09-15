@@ -114,7 +114,7 @@ def character_menu_options():
             char_id = character_select(char_list)
             if char_id:
                 print('loading...')
-                gameplay(char_id)
+                play(char_id)
         elif op == 2:
             criar_personagem()
         elif op == 3:
@@ -269,13 +269,15 @@ def excluir_personagem(char_id):
 
 def load_map(jogador_pos=None):
     mapa = [
-        ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
-        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-        ['#', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
-        ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#']
+        ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', '#', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
+        ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#']
     ]
 
     if jogador_pos:
@@ -285,25 +287,49 @@ def load_map(jogador_pos=None):
     return mapa
 
 
-def gameplay(char_id):
+def play(char_id):
     char = login(char_id)
+    coordenadas = gameplay(char)
+    s = json.dumps(coordenadas)
+    char.localizacao = s
+    char.online = False
+    varss = vars(char)
+    logoff(varss)
+
+
+def gameplay(char):
     str_coord = char.localizacao
     coordenadas = ast.literal_eval(str_coord)
-    mapa = load_map(jogador_pos=(coordenadas[1],coordenadas[2]))
-    for linha in mapa:
-        print(' '.join(linha))
+
     char.status = json.loads(char.status)
     char.nivel = 3
     char.hp = 100
     char.inventario = json.loads(char.inventario)
-    coordenadas[1] = 4
-    coordenadas[2] = 5
-    mapa = load_map(jogador_pos=(coordenadas[1],coordenadas[2]))
-    for linha in mapa:
-        print(' '.join(linha))
-    s = json.dumps(coordenadas)
-    print(s)
-    print(type(s))
-    char.localizacao = s
-    varss = vars(char)
-    logoff(varss)
+
+    while True:
+        mapa = load_map(jogador_pos=(coordenadas[1],coordenadas[2]))
+        for linha in mapa:
+            print(' '.join(linha))
+
+        option = input(
+            "\nSelecione a opção que você deseja:\n"
+            "[ W ] - Andar para cima\n"
+            "[ A ] - Andar para esquerda\n"
+            "[ S ] - Andar para baixo\n"
+            "[ D ] - Andar para direita\n"
+            "[ Q ] - Atacar\n"
+            "[ E ] - Interagir\n"
+            "[ R ] - Defender\n"
+            "[ L ] - Deslogar\n\n"
+        ).upper()
+
+        if option == 'W':
+            coordenadas[2] -= 1
+        elif option == 'A':
+            coordenadas[1] -= 1
+        elif option == 'S':
+            coordenadas[2] += 1
+        elif option == 'D':
+            coordenadas[1] += 1
+        elif option == 'L':
+            return coordenadas
