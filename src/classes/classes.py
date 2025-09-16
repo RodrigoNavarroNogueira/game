@@ -129,7 +129,7 @@ def criar_jogador(tipo_raca):
         def __init__(self, id, online, xp, nome, altura, idade, sexo):
             super().__init__()
             self.id = id
-            self.localizacao = ["base_map", 3, 3]
+            self.localizacao = ["base_map", 2, 3]
             self.online = online
             self.xp = xp
             self.nome = nome

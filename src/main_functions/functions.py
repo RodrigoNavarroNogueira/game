@@ -282,7 +282,7 @@ def load_map(jogador_pos=None):
 
     if jogador_pos:
         x, y = jogador_pos
-        mapa[y][x] = 'P'
+        mapa[x][y] = 'P'
     
     return mapa
 
@@ -307,7 +307,8 @@ def gameplay(char):
     char.inventario = json.loads(char.inventario)
 
     while True:
-        mapa = load_map(jogador_pos=(coordenadas[1],coordenadas[2]))
+
+        mapa = load_map(jogador_pos=(coordenadas[1:3]))
         for linha in mapa:
             print(' '.join(linha))
 
@@ -324,12 +325,51 @@ def gameplay(char):
         ).upper()
 
         if option == 'W':
-            coordenadas[2] -= 1
+            aut = next_step_verify(mapa, coordenadas, 'W')
+            if aut:
+                coordenadas[1] -= 1
         elif option == 'A':
-            coordenadas[1] -= 1
+            aut = next_step_verify(mapa, coordenadas, 'A')
+            if aut:
+                coordenadas[2] -= 1
         elif option == 'S':
-            coordenadas[2] += 1
+            aut = next_step_verify(mapa, coordenadas, 'S')
+            if aut:
+                coordenadas[1] += 1
         elif option == 'D':
-            coordenadas[1] += 1
+            aut = next_step_verify(mapa, coordenadas, 'D')
+            if aut:
+                coordenadas[2] += 1
         elif option == 'L':
             return coordenadas
+
+
+def next_step_verify(mapa, coordenadas, direction):
+    if direction == 'W':
+        next_step = mapa[coordenadas[1] - 1][coordenadas[2]]
+        if next_step == ' ':
+            return True
+        else:
+            print('Algo está bloqueando seu caminho...')
+            return False
+    elif direction == 'A':
+        next_step = mapa[coordenadas[1]][coordenadas[2] - 1]
+        if next_step == ' ':
+            return True
+        else:
+            print('Algo está bloqueando seu caminho...')
+            return False
+    elif direction == 'S':
+        next_step = mapa[coordenadas[1] + 1][coordenadas[2]]
+        if next_step == ' ':
+            return True
+        else:
+            print('Algo está bloqueando seu caminho...')
+            return False
+    elif direction == 'D':
+        next_step = mapa[coordenadas[1]][coordenadas[2] + 1]
+        if next_step == ' ':
+            return True
+        else:
+            print('Algo está bloqueando seu caminho...')
+            return False

@@ -371,6 +371,5 @@ def loop():
             print('\nFinalizando o programa, até mais!\n')
             raise SystemExit
 # fazer não se mexer se tiver outro player, monstro, npc ou parede
-# algo está bloqueando seu caminho...
 # arrumar no banco de dados a coluna online
 loop()
