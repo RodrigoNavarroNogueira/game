@@ -366,10 +366,10 @@ def loop():
         if opcao == 1:
             character_menu_options()
         elif opcao == 2:
-            pass
+            criar_criatura()
         elif opcao == 3:
             print('\nFinalizando o programa, até mais!\n')
             raise SystemExit
-# fazer não se mexer se tiver outro player, monstro, npc ou parede
+
 # arrumar no banco de dados a coluna online
 loop()

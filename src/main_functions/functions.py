@@ -158,6 +158,37 @@ def criar_personagem():
     connection.commit()
 
 
+def criar_criatura():
+    orc = Criatura(1, 'Orc Azul', 'orc', 2, 300, 'Male')
+    monster_dict = vars(orc)
+    monster_dict.pop('id')
+    print(monster_dict)
+
+    connection = pymysql.connect(
+    host=os.environ['MYSQL_HOST'],
+    user=os.environ['MYSQL_USER'],
+    password=os.environ['MYSQL_PASSWORD'],
+    database=os.environ['MYSQL_DATABASE'],)
+
+    with connection.cursor() as cursor:
+    # Transforma listas e dicionários em JSON para armazenar corretamente
+        for key in monster_dict:
+            if isinstance(monster_dict[key], (dict, list)):
+                monster_dict[key] = json.dumps(monster_dict[key])
+
+        # Monta a query dinamicamente
+        columns = ", ".join(monster_dict.keys())  # Pega os nomes das colunas
+        placeholders = ", ".join(["%s"] * len(monster_dict))  # Placeholders %s
+        values = tuple(monster_dict.values())  # Pega os valores do dicionário
+
+        sql = f"""INSERT INTO monsters ({columns}) VALUES ({placeholders})"""
+
+        # Conectando ao banco de dados e executando a query
+
+        cursor.execute(sql, values)
+    connection.commit()
+
+
 def character_select(char_list, delete=None):
     if len(char_list) <= 0:
         print('\nVocê ainda não criou nenhum personagem!')
@@ -267,7 +298,7 @@ def excluir_personagem(char_id):
     print(f'O personagem foi excluido!')
 
 
-def load_map(jogador_pos=None):
+def load_map(jogador_pos=None, monsters=None):
     mapa = [
         ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
         ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],

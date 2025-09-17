@@ -210,6 +210,7 @@ class Criatura(Ser):
         super().__init__()
         self.id = id
         self.nome = nome
+        self.localizacao = ["base_map", 1, 6]
         self.raca = raca
         self.altura = altura
         self.idade = idade
