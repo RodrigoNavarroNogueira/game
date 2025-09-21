@@ -55,8 +55,20 @@ def login(char_id):
             sql = (f'SELECT * FROM characters WHERE id=%s')
             cursor.execute(sql, (char_id,))
             data_char = cursor.fetchall()  # type: ignore
+    
+    race = data_char[0][20]
+    race_map = {
+        "Humano": Humano,
+        "Elf": Elfo,
+        "Orc": Orc,
+        "Anão": Anao
+    }
+    RaceClass = race_map.get(race)
 
-    Jogador = instanciar_jogador(Humano)
+    if RaceClass is None:
+        raise ValueError(f"Raça '{race}' não encontrada no mapeamento!")
+
+    Jogador = instanciar_jogador(RaceClass)
     char = Jogador(*data_char[0])
     char.online = True
     return char
@@ -103,6 +115,22 @@ def list_characters():
             char_list = cursor.fetchall()  # type: ignore
     
     return char_list
+
+
+def list_monsters():
+    connection = pymysql.connect(
+    host=os.environ['MYSQL_HOST'],
+    user=os.environ['MYSQL_USER'],
+    password=os.environ['MYSQL_PASSWORD'],
+    database=os.environ['MYSQL_DATABASE'],)
+
+    with connection:
+        with connection.cursor() as cursor:
+            sql = (f'SELECT * FROM monsters')
+            cursor.execute(sql)
+            monster_list = cursor.fetchall()  # type: ignore
+    
+    return monster_list
 
 
 def character_menu_options():
@@ -159,7 +187,7 @@ def criar_personagem():
 
 
 def criar_criatura():
-    orc = Criatura(1, 'Orc Azul', 'orc', 2, 300, 'Male')
+    orc = Criatura(1, 'aaa', ["base_map", 6, 10], 'orc', 2, 300, 'Male')
     monster_dict = vars(orc)
     monster_dict.pop('id')
     print(monster_dict)
@@ -314,6 +342,12 @@ def load_map(jogador_pos=None, monsters=None):
     if jogador_pos:
         x, y = jogador_pos
         mapa[x][y] = 'P'
+
+    if monsters:
+        # tem que vir um dicionario com a nome de chave e posicao de todos os monstros de valor
+        for m in monsters:
+            x, y = m[1], m[2]
+            mapa[x][y] = 'M'
     
     return mapa
 
@@ -329,17 +363,29 @@ def play(char_id):
 
 
 def gameplay(char):
+    monster_list = list_monsters()
+    monster_coordinates = []
+    monster = load_monsters()
+    for n in range(0, len(monster_list)):
+        lista = ast.literal_eval(monster_list[n][2])
+        monster_coordinates.append(lista)
+
     str_coord = char.localizacao
     coordenadas = ast.literal_eval(str_coord)
 
     char.status = json.loads(char.status)
-    char.nivel = 3
-    char.hp = 100
+    # char.nivel = 3
+    # char.hp = 100
     char.inventario = json.loads(char.inventario)
+    monster.status = json.loads(monster.status)
+
+    char.mostrar_status()
+    monster.mostrar_status()
+    breakpoint()
 
     while True:
 
-        mapa = load_map(jogador_pos=(coordenadas[1:3]))
+        mapa = load_map(jogador_pos=(coordenadas[1:3]), monsters=monster_coordinates)
         for linha in mapa:
             print(' '.join(linha))
 
@@ -404,3 +450,22 @@ def next_step_verify(mapa, coordenadas, direction):
         else:
             print('Algo está bloqueando seu caminho...')
             return False
+
+
+def load_monsters():
+    connection = pymysql.connect(
+    host=os.environ['MYSQL_HOST'],
+    user=os.environ['MYSQL_USER'],
+    password=os.environ['MYSQL_PASSWORD'],
+    database=os.environ['MYSQL_DATABASE'],)
+
+    with connection:
+        with connection.cursor() as cursor:
+            sql = (f'SELECT * FROM monsters WHERE id=%s')
+            cursor.execute(sql, (1,))
+            data_mons = cursor.fetchall()  # type: ignore
+
+    Criatura = instanciar_criatura(Ser)
+    monster = Criatura(*data_mons[0])
+    return monster
+

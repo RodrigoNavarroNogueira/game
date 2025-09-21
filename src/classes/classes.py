@@ -66,6 +66,8 @@ class Humano(Ser):
         # self.status lambda # vamos usar uma lambda para aumentar em 10% todos os status por 10s 
         ...
 
+    def mostrar_raca(self):
+        print(f'Minha raça é {self.raca} e sou HUMANO!')
 
 class Orc(Ser):
     def __init__(self):
@@ -83,6 +85,9 @@ class Orc(Ser):
     def furia_dos_orcs(self, alvo):
         # atordoa o alvo por 2s
         ...
+
+    def mostrar_raca(self):
+        print(f'Minha raça é {self.raca} e sou ORC!')
 
 
 class Elfo(Ser):
@@ -106,6 +111,8 @@ class Elfo(Ser):
         # Tira CC ou cura
         ...
 
+    def mostrar_raca(self):
+        print(f'Minha raça é {self.raca} e sou ELFO!')
 
 class Anao(Ser):
     def __init__(self):
@@ -123,6 +130,10 @@ class Anao(Ser):
     def pele_dura(self):
         # Ganha 30% de resistência a dano por 10 segundos, só pode ser usado com menos de 50% da vida. CD: 60s 
         ...
+
+    def mostrar_raca(self):
+        print(f'Minha raça é {self.raca} e sou Anao!')
+
 
 def criar_jogador(tipo_raca):
     class Jogador(tipo_raca):
@@ -206,11 +217,11 @@ class Npc(Elfo):
  
 
 class Criatura(Ser):
-    def __init__(self, id, nome, raca, altura, idade, sexo):
+    def __init__(self, id, nome, localizacao, raca, altura, idade, sexo):
         super().__init__()
         self.id = id
         self.nome = nome
-        self.localizacao = ["base_map", 1, 6]
+        self.localizacao = localizacao
         self.raca = raca
         self.altura = altura
         self.idade = idade
@@ -219,6 +230,33 @@ class Criatura(Ser):
         self.rage = 0
         self.atributos = {'forca': 10, 'agilidade': 5, 'destreza': 5, 'constituicao': 9, 'inteligencia': 3}
         self.status = {'ad': 10, 'ap': 3, 'deff': 9, 'mdef': 9, 'vel_atk': 1, 'cd': 1, 'crit': 1, 'vel_mov': 1}
+
+
+def instanciar_criatura(tipo_raca):
+    class Criatura(tipo_raca):
+        def __init__(self, id, nome, localizacao, nivel, hp, mana, rage, buffs, debuffs, altura, idade, sexo, atributos, status, inventario, equips, ouro, emotes, raca):
+            super().__init__()
+            self.id = id
+            self.nome = nome
+            self.localizacao = localizacao
+            self.nivel = nivel
+            self.hp = hp
+            self.mana = mana
+            self.rage = rage
+            self.buffs = buffs
+            self.debuffs = debuffs
+            self.altura = altura
+            self.idade = idade
+            self.sexo = sexo
+            self.atributos = atributos
+            self.status = status
+            self.inventario = inventario
+            self.equips = equips
+            self.ouro = ouro
+            self.emotes = emotes
+            self.raca = raca
+
+    return Criatura
 
 
 class Objeto(Ser):

@@ -371,5 +371,6 @@ def loop():
             print('\nFinalizando o programa, até mais!\n')
             raise SystemExit
 
+# fazer a mecanica de ataque
 # arrumar no banco de dados a coluna online
 loop()
