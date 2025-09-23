@@ -357,6 +357,7 @@ def interacao(alvo, player):
 
 
 from main_functions.functions import *
+from main_functions.combat import *
 
 
 def loop():

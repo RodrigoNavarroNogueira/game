@@ -5,6 +5,7 @@ import pymysql
 from classes.classes import *
 import json
 import ast
+from main_functions.combat import *
 
 dotenv.load_dotenv()
 
@@ -222,6 +223,7 @@ def character_select(char_list, delete=None):
         print('\nVocê ainda não criou nenhum personagem!')
     else:
         nick = ''
+        print()
         for i, letra in enumerate(char_list):
             print(f'{i + 1} - {letra[1]}')
         
@@ -344,7 +346,7 @@ def load_map(jogador_pos=None, monsters=None):
         mapa[x][y] = 'P'
 
     if monsters:
-        # tem que vir um dicionario com a nome de chave e posicao de todos os monstros de valor
+
         for m in monsters:
             x, y = m[1], m[2]
             mapa[x][y] = 'M'
@@ -354,7 +356,8 @@ def load_map(jogador_pos=None, monsters=None):
 
 def play(char_id):
     char = login(char_id)
-    coordenadas = gameplay(char)
+    monstros_instanciados = load_monsters()
+    coordenadas = gameplay(char, monstros_instanciados)
     s = json.dumps(coordenadas)
     char.localizacao = s
     char.online = False
@@ -362,13 +365,16 @@ def play(char_id):
     logoff(varss)
 
 
-def gameplay(char):
+def gameplay(char, monstros_instanciados):
+    # aqui esta vindo uma lista de objetos
     monster_list = list_monsters()
     monster_coordinates = []
-    monster = load_monsters()
+    
     for n in range(0, len(monster_list)):
         lista = ast.literal_eval(monster_list[n][2])
         monster_coordinates.append(lista)
+        monstros_instanciados[n].status = json.loads(monstros_instanciados[n].status)
+        monstros_instanciados[n].mostrar_status()
 
     str_coord = char.localizacao
     coordenadas = ast.literal_eval(str_coord)
@@ -377,11 +383,25 @@ def gameplay(char):
     # char.nivel = 3
     # char.hp = 100
     char.inventario = json.loads(char.inventario)
-    monster.status = json.loads(monster.status)
 
     char.mostrar_status()
-    monster.mostrar_status()
-    breakpoint()
+    
+
+    #breakpoint()
+
+    #COMBATE
+
+    # char.atacar(monster)
+    # monster.mostrar_status()
+    # print()
+
+    # monster.atacar(char)
+    # char.mostrar_status()
+    # #espada.usar(char)
+    # char.atacar(monster)
+    # monster.mostrar_status()
+    # #pocao.usar(char)
+    # char.mostrar_status()
 
     while True:
 
@@ -417,6 +437,8 @@ def gameplay(char):
             aut = next_step_verify(mapa, coordenadas, 'D')
             if aut:
                 coordenadas[2] += 1
+        elif option == 'Q':
+            print(aa_range_verify())
         elif option == 'L':
             return coordenadas
 
@@ -453,19 +475,24 @@ def next_step_verify(mapa, coordenadas, direction):
 
 
 def load_monsters():
-    connection = pymysql.connect(
-    host=os.environ['MYSQL_HOST'],
-    user=os.environ['MYSQL_USER'],
-    password=os.environ['MYSQL_PASSWORD'],
-    database=os.environ['MYSQL_DATABASE'],)
+    monster_list = list_monsters()
+    monstros_instanciados = []
+    for n in range(1, len(monster_list) + 1):
+        connection = pymysql.connect(
+        host=os.environ['MYSQL_HOST'],
+        user=os.environ['MYSQL_USER'],
+        password=os.environ['MYSQL_PASSWORD'],
+        database=os.environ['MYSQL_DATABASE'],)
 
-    with connection:
-        with connection.cursor() as cursor:
-            sql = (f'SELECT * FROM monsters WHERE id=%s')
-            cursor.execute(sql, (1,))
-            data_mons = cursor.fetchall()  # type: ignore
+        with connection:
+            with connection.cursor() as cursor:
+                sql = (f'SELECT * FROM monsters WHERE id=%s')
+                cursor.execute(sql, (n,))
+                data_mons = cursor.fetchall()  # type: ignore
 
-    Criatura = instanciar_criatura(Ser)
-    monster = Criatura(*data_mons[0])
-    return monster
+        Criatura = instanciar_criatura(Ser)
+        monster = Criatura(*data_mons[0])
+        monstros_instanciados.append(monster)
+
+    return monstros_instanciados
 
