@@ -230,7 +230,7 @@ def character_select(char_list, delete=None):
         if delete is not None:
             slot = int(input('\nSelecione o char que você quer excluir: \n'))
         else:
-            slot = int(input('\nSelecione o char que você quer logar: \n'))
+            slot = int(input('\nSelecione o char que você quer logar: \n\n'))
 
         for i, tupla in enumerate(char_list):
             i += 1
@@ -328,7 +328,7 @@ def excluir_personagem(char_id):
     print(f'O personagem foi excluido!')
 
 
-def load_map(jogador_pos=None, monsters=None):
+def load_map(monstros_instanciados, jogador_pos=None, monsters=None):
     mapa = [
         ['#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#', '#'],
         ['#', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '#'],
@@ -346,7 +346,11 @@ def load_map(jogador_pos=None, monsters=None):
         mapa[x][y] = 'P'
 
     if monsters:
-
+        breakpoint()
+        for n in range(0, len(monsters)):
+            if monstros_instanciados[n].hp <= 0:
+                monsters.pop(n)
+        
         for m in monsters:
             x, y = m[1], m[2]
             mapa[x][y] = 'M'
@@ -381,31 +385,14 @@ def gameplay(char, monstros_instanciados):
 
     char.status = json.loads(char.status)
     # char.nivel = 3
-    # char.hp = 100
+    # char.hp = 500
+    # char.mana = 500
     char.inventario = json.loads(char.inventario)
-
     char.mostrar_status()
-    
-
-    #breakpoint()
-
-    #COMBATE
-
-    # char.atacar(monster)
-    # monster.mostrar_status()
-    # print()
-
-    # monster.atacar(char)
-    # char.mostrar_status()
-    # #espada.usar(char)
-    # char.atacar(monster)
-    # monster.mostrar_status()
-    # #pocao.usar(char)
-    # char.mostrar_status()
 
     while True:
 
-        mapa = load_map(jogador_pos=(coordenadas[1:3]), monsters=monster_coordinates)
+        mapa = load_map(monstros_instanciados, jogador_pos=(coordenadas[1:3]), monsters=monster_coordinates)
         for linha in mapa:
             print(' '.join(linha))
 
@@ -438,7 +425,15 @@ def gameplay(char, monstros_instanciados):
             if aut:
                 coordenadas[2] += 1
         elif option == 'Q':
-            print(aa_range_verify())
+            redor = aa_range_verify(mapa, coordenadas[1:])
+            if not 'M' in redor or not '#' in redor:
+                print('Você atacou, mas não acertou nada...')
+            else:
+                qtd_mons = redor.count('M')
+                if qtd_mons == 1:
+                    battle(char, monstros_instanciados[0])
+                else:
+                    print('Escolha qual monstro voce deseja enfrentar')
         elif option == 'L':
             return coordenadas
 
