@@ -3,6 +3,7 @@ import os
 import textwrap
 import dotenv
 import pymysql
+import random
 
 TABLE_NAME = 'characters'
 
@@ -36,8 +37,9 @@ class Ser:
         self.emotes = []
 
     def atacar(self, alvo):
-        alvo.hp -= self.status['ad']
-        print(f'{self.nome} atacou {alvo.nome} causando {self.status["ad"]} de dano!')
+        dano = max(1, self.status['ad'] - alvo.status['deff'] + random.randint(-1, 2))
+        alvo.hp -= dano
+        print(f'{self.nome} atacou {alvo.nome} causando {dano} de dano!')
         if alvo.hp <= 0:
             alvo.hp = 0
             print(f'{alvo.nome} foi derrotado!')
@@ -68,6 +70,15 @@ class Humano(Ser):
 
     def mostrar_raca(self):
         print(f'Minha raça é {self.raca} e sou HUMANO!')
+
+    def usar_magia(self, alvo):
+        if self.mana >= 3:
+            dano = random.randint(50, 60)
+            alvo.hp -= dano
+            self.mana -= 3
+            print(f"{self.nome} lançou uma MAGIA em {alvo.nome} causando {dano} de dano! (HP {alvo.nome}: {alvo.hp})")
+        else:
+            print(f"{self.nome} tentou usar magia, mas não tem mana suficiente!")
 
 class Orc(Ser):
     def __init__(self):
